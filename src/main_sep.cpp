@@ -2,6 +2,7 @@
 #include <iostream>
 #include "circular_buffer.h"
 #include "packet_parser.h"
+#include "fault_detector.h"
 
 using namespace std;
 
@@ -32,19 +33,19 @@ int main(int argc, char* argv[]){
     int packet_id, value, checksum;
     CircularBuffer cb;
 
-    while(parsePacket(file >> packet_id >> value >> checksum)){
+    while(parsePacket(file, packet_id, value, checksum)){
 
         cb.add(value);
 
-        if(checksum != (packet_id + value) % 2){
+        if(isCorrupted(packet_id, value, checksum)){
             logFile << "CORRUPTED PACKET ID: " << packet_id << endl;
         }
 
-        if(value < 0){
+        if(isInvalid(value)){
             logFile << "INVALID VALUE: " << value << endl;
         }
 
-        if(value > threshold){
+        if(isAlert(value, threshold)){
             cout << "ALERT: " << value << endl;
             logFile << "ALERT: " << value << endl;
         }
