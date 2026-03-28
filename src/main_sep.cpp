@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include "circular_buffer.h"
+#include "packet_parser.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ int main(int argc, char* argv[]){
     int packet_id, value, checksum;
     CircularBuffer cb;
 
-    while(file >> packet_id >> value >> checksum){
+    while(parsePacket(file >> packet_id >> value >> checksum)){
 
         cb.add(value);
 
@@ -48,7 +49,6 @@ int main(int argc, char* argv[]){
             logFile << "ALERT: " << value << endl;
         }
     }
-
     cb.display();
 
     return 0;
